@@ -20,4 +20,23 @@ class AirportsController extends AbstractController
 
         return $this->json($airports);
     }
+
+    /**
+     * @Route("/airports/{id}", methods={"DELETE"})
+     * @param $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $airport = $this->getDoctrine()
+            ->getRepository(Airport::class)
+            ->find($id);
+
+        $entityManager->remove($airport);
+        $entityManager->flush();
+
+        return new response("Deleted", Response::HTTP_OK);
+    }
 }
