@@ -253,7 +253,8 @@ class Airport implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'name' => $this->getName()
+            'name' => $this->getName(),
+            'id' => $this->getAirportId()
         ];
     }
 }
