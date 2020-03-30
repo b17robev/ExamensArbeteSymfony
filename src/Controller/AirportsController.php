@@ -24,6 +24,27 @@ class AirportsController extends AbstractController
     }
 
     /**
+     * @Route("/airports/{id}", methods={"PATCH"})
+     * @param $id
+    * @param Request $request
+    * @return Response
+    */
+    public function update(Request $request, $id)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $data = $request->request->all();
+
+        $airport = $this->getDoctrine()->getRepository(Airport::class)->find($id);
+
+        $airport->setName($data['name']);
+        $entityManager->persist($airport);
+
+        $entityManager->flush();
+
+        return new JsonResponse($airport);
+    }
+
+    /**
      * @Route("/airports", methods={"Post"})
      * @param Request $request
      * @return Response
@@ -31,12 +52,12 @@ class AirportsController extends AbstractController
     public function store(Request $request)
     {
         $entityManager = $this->getDoctrine()->getManager();
-
         $data = $request->request->all();
 
         $airport = new Airport();
 
         $airport->setAirportId((int)$data['airport_id']);
+        $airport->setName($data['name']);
 
         $entityManager->persist($airport);
         $entityManager->flush();
