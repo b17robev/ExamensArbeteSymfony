@@ -24,6 +24,20 @@ class AirportsController extends AbstractController
     }
 
     /**
+     * @Route("/airports/{id}", methods={"GET"})
+     * @param $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        $airport = $this->getDoctrine()
+            ->getRepository(Airport::class)
+            ->find($id);
+
+        return new JsonResponse($airport);
+    }
+
+    /**
      * @Route("/airports/{id}", methods={"PATCH"})
      * @param $id
     * @param Request $request
