@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tasks{% endblock %}
+
+{% block body %}
+
+    <h1>All Airports</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Airport</th>
+                <th>Show</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for airport in airports %}
+                <tr>
+                    <th>{{ airport.getAirportId() }}</th>
+                    <th>{{ airport.getName() }}</th>
+                    <th><a href="{{ path('airport_show', {id: airport.getAirportId()}) }}"> Show </a></th>
+                    <th>
+                        <form action="{{ path('airport_destroy', {'id': airport.getAirportId()}) }}" method="post">
+                            <input type="hidden" name="_method" value="DELETE" />
+                            <input type="submit" value="Delete" />
+                        </form>
+                    </th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

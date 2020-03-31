@@ -20,11 +20,13 @@ class AirportsController extends AbstractController
             ->getRepository(Airport::class)
             ->findAll();
 
-        return $this->json($airports);
+        return $this->render("airports/index.html.twig", [
+            'airports' => $airports
+        ]);
     }
 
     /**
-     * @Route("/airports/{id}", methods={"GET"})
+     * @Route("/airports/{id}", methods={"GET"}, name="airport_show")
      * @param $id
      * @return Response
      */
@@ -38,7 +40,7 @@ class AirportsController extends AbstractController
     }
 
     /**
-     * @Route("/airports/{id}", methods={"PATCH"})
+     * @Route("/airports/{id}", methods={"PATCH"}, name="airport_update")
      * @param $id
     * @param Request $request
     * @return Response
@@ -59,7 +61,7 @@ class AirportsController extends AbstractController
     }
 
     /**
-     * @Route("/airports", methods={"Post"})
+     * @Route("/airports", methods={"Post"}, name="airport_store")
      * @param Request $request
      * @return Response
      */
@@ -80,7 +82,7 @@ class AirportsController extends AbstractController
     }
 
     /**
-     * @Route("/airports/{id}", methods={"DELETE"})
+     * @Route("/airports/{id}", methods={"DELETE"}, name="airport_destroy")
      * @param $id
      * @return Response
      */
@@ -93,8 +95,9 @@ class AirportsController extends AbstractController
             ->find($id);
 
         $entityManager->remove($airport);
+
         $entityManager->flush();
 
-        return new response("Deleted", Response::HTTP_OK);
+        return $this->redirect('/airports');
     }
 }
