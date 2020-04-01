@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Airport;
+use http\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,11 +33,25 @@ class AirportsController extends AbstractController
      */
     public function show($id)
     {
+
+        $before = microtime(true);
         $airport = $this->getDoctrine()
             ->getRepository(Airport::class)
             ->find($id);
+        $after = microtime(true);
 
-        return new JsonResponse($airport);
+        $url = "http://localhost:8080/scrapper/index.php";
+        $result = $after - $before . "\n";
+
+        $this->httpPost($url, $result, "show");
+
+        if(!$airport) {
+            return new Response("Couldn't find airport with id of $id", 410);
+        }
+
+        return $this->render("airports/show.html.twig", [
+            'airport' => $airport
+        ]);
     }
 
     /**
@@ -51,6 +66,10 @@ class AirportsController extends AbstractController
         $data = $request->request->all();
 
         $airport = $this->getDoctrine()->getRepository(Airport::class)->find($id);
+
+        if(!$airport) {
+            return new Response("Couldn't find airport with id of $id", 410);
+        }
 
         $airport->setName($data['name']);
         $entityManager->persist($airport);
@@ -94,10 +113,27 @@ class AirportsController extends AbstractController
             ->getRepository(Airport::class)
             ->find($id);
 
+        if(!$airport) {
+            return new Response("Couldn't find airport with id of $id", 410);
+        }
+
         $entityManager->remove($airport);
 
         $entityManager->flush();
 
         return $this->redirect('/airports');
     }
+
+    function httpPost($url, $data, $method)
+    {
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, "$method=$data");
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        return $response;
+    }
+
 }
