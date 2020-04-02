@@ -45,10 +45,6 @@ class AirportsController extends AbstractController
 
         $this->httpPost($url, $result, "show");
 
-        if(!$airport) {
-            return new Response("Couldn't find airport with id of $id", 410);
-        }
-
         return $this->render("airports/show.html.twig", [
             'airport' => $airport
         ]);
@@ -127,10 +123,6 @@ class AirportsController extends AbstractController
         $airport = $this->getDoctrine()
             ->getRepository(Airport::class)
             ->find($id);
-
-        if(!$airport) {
-            return new Response("Couldn't find airport with id of $id", 410);
-        }
 
         $entityManager->remove($airport);
 
