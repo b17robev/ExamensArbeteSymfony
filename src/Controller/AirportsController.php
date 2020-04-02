@@ -67,14 +67,20 @@ class AirportsController extends AbstractController
 
         $airport = $this->getDoctrine()->getRepository(Airport::class)->find($id);
 
-        if(!$airport) {
-            return new Response("Couldn't find airport with id of $id", 410);
-        }
-
         $airport->setName($data['name']);
+        $airport->setCity($data['city']);
+        $airport->setCountry($data['country']);
+
         $entityManager->persist($airport);
 
+        $before = microtime(true);
         $entityManager->flush();
+        $after = microtime(true);
+
+        $url = "http://localhost:8080/scrapper/index.php";
+        $result = $after - $before . "\n";
+
+        $this->httpPost($url, $result, "update");
 
         return new JsonResponse($airport);
     }
@@ -91,11 +97,20 @@ class AirportsController extends AbstractController
 
         $airport = new Airport();
 
-        $airport->setAirportId((int)$data['airport_id']);
         $airport->setName($data['name']);
+        $airport->setCity($data['city']);
+        $airport->setCountry($data['country']);
 
         $entityManager->persist($airport);
+
+        $before = microtime(true);
         $entityManager->flush();
+        $after = microtime(true);
+
+        $url = "http://localhost:8080/scrapper/index.php";
+        $result = $after - $before . "\n";
+
+        $this->httpPost($url, $result, "store");
 
         return new Response("Saved new airport with id " . $airport->getAirportId());
     }
@@ -119,9 +134,16 @@ class AirportsController extends AbstractController
 
         $entityManager->remove($airport);
 
+        $before = microtime(true);
         $entityManager->flush();
+        $after = microtime(true);
 
-        return $this->redirect('/airports');
+        $url = "http://localhost:8080/scrapper/index.php";
+        $result = $after - $before . "\n";
+
+        $this->httpPost($url, $result, "destroy");
+
+        return new Response('Deleted', 200);
     }
 
     function httpPost($url, $data, $method)
