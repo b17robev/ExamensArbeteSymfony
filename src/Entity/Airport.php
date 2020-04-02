@@ -13,6 +13,7 @@ class Airport implements \JsonSerializable
 {
     /**
      * @ORM\Id()
+     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     private $airport_id;
