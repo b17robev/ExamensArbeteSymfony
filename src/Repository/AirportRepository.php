@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Airport;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @method Airport|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,13 +13,15 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @method Airport[]    findAll()
  * @method Airport[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AirportRepository extends ServiceEntityRepository
+class AirportRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function take($amount)
     {
-        parent::__construct($registry, Airport::class);
+        return $this->createQueryBuilder('a')
+                ->setMaxResults($amount)
+                ->getQuery()
+                ->getResult();
     }
-
     // /**
     //  * @return Airport[] Returns an array of Airport objects
     //  */

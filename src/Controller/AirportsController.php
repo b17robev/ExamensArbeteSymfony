@@ -14,12 +14,19 @@ class AirportsController extends AbstractController
 {
     /**
      * @Route("/airports", methods={"GET"})
+     * @param Request $request
+     * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $airports = $this->getDoctrine()
             ->getRepository(Airport::class)
             ->findAll();
+        $rep = $this->getDoctrine()
+            ->getRepository(Airport::class);
+        if($amount = $request->attributes->get('amount')) {
+            $rep->take($amount);
+        }
 
         return $this->render("airports/index.html.twig", [
             'airports' => $airports
@@ -34,16 +41,22 @@ class AirportsController extends AbstractController
     public function show($id)
     {
 
+        $data = [];
+
+        $base_mem = memory_get_peak_usage();
         $before = microtime(true);
         $airport = $this->getDoctrine()
             ->getRepository(Airport::class)
             ->find($id);
         $after = microtime(true);
+        $total_mem = memory_get_peak_usage();
 
-        $url = "http://localhost:8080/scrapper/index.php";
-        $result = $after - $before . "\n";
+        $data[] = $after - $before;
+        $data[] = $total_mem - $base_mem;
 
-        $this->httpPost($url, $result, "show");
+        $result = implode(',', $data) . "\n";
+
+        $this->httpPost($this->getParameter('app.scraper_url'), $result, "show");
 
         return $this->render("airports/show.html.twig", [
             'airport' => $airport
@@ -69,14 +82,21 @@ class AirportsController extends AbstractController
 
         $entityManager->persist($airport);
 
+        $data = [];
+
+        $base_mem = memory_get_peak_usage();
         $before = microtime(true);
         $entityManager->flush();
         $after = microtime(true);
+        $total_mem = memory_get_peak_usage();
 
-        $url = "http://localhost:8080/scrapper/index.php";
-        $result = $after - $before . "\n";
+        $data[] = $after - $before;
+        $data[] = $total_mem - $base_mem;
 
-        $this->httpPost($url, $result, "update");
+        $result = implode(',', $data) . "\n";
+
+        $this->httpPost($this->getParameter('app.scraper_url'), $result, "update");
+
 
         return new JsonResponse($airport);
     }
@@ -99,14 +119,20 @@ class AirportsController extends AbstractController
 
         $entityManager->persist($airport);
 
+        $data = [];
+
+        $base_mem = memory_get_peak_usage();
         $before = microtime(true);
         $entityManager->flush();
         $after = microtime(true);
+        $total_mem = memory_get_peak_usage();
 
-        $url = "http://localhost:8080/scrapper/index.php";
-        $result = $after - $before . "\n";
+        $data[] = $after - $before;
+        $data[] = $total_mem - $base_mem;
 
-        $this->httpPost($url, $result, "store");
+        $result = implode(',', $data) . "\n";
+
+        $this->httpPost($this->getParameter('app.scraper_url'), $result, "store");
 
         return new Response("Saved new airport with id " . $airport->getAirportId());
     }
@@ -126,14 +152,20 @@ class AirportsController extends AbstractController
 
         $entityManager->remove($airport);
 
+        $data = [];
+
+        $base_mem = memory_get_peak_usage();
         $before = microtime(true);
         $entityManager->flush();
         $after = microtime(true);
+        $total_mem = memory_get_peak_usage();
 
-        $url = "http://localhost:8080/scrapper/index.php";
-        $result = $after - $before . "\n";
+        $data[] = $after - $before;
+        $data[] = $total_mem - $base_mem;
 
-        $this->httpPost($url, $result, "destroy");
+        $result = implode(',', $data) . "\n";
+
+        $this->httpPost($this->getParameter('app.scraper_url'), $result, "destroy");
 
         return new Response('Deleted', 200);
     }
