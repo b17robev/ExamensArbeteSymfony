@@ -40,16 +40,15 @@ class AirportsController extends AbstractController
      */
     public function show($id)
     {
-
         $data = [];
 
-        $base_mem = memory_get_peak_usage();
+        $base_mem = memory_get_usage();
         $before = microtime(true);
         $airport = $this->getDoctrine()
             ->getRepository(Airport::class)
             ->find($id);
         $after = microtime(true);
-        $total_mem = memory_get_peak_usage();
+        $total_mem = memory_get_usage();
 
         $data[] = $after - $before;
         $data[] = $total_mem - $base_mem;
@@ -76,19 +75,30 @@ class AirportsController extends AbstractController
 
         $airport = $this->getDoctrine()->getRepository(Airport::class)->find($id);
 
+        $airport->setAirportId($data['airport_id']);
         $airport->setName($data['name']);
         $airport->setCity($data['city']);
         $airport->setCountry($data['country']);
+        $airport->setIata($data['iata']);
+        $airport->setIcao($data['icao']);
+        $airport->setLatitude($data['latitude']);
+        $airport->setLongitude($data['longitude']);
+        $airport->setAltitude($data['altitude']);
+        $airport->setTimezone($data['timezone']);
+        $airport->setTzDatabaseTimeZone($data['tz_database_time_zone']);
+        $airport->setType($data['type']);
+        $airport->setSource($data['source']);
+        $airport->setLocation($data['location']);
 
         $entityManager->persist($airport);
 
         $data = [];
 
-        $base_mem = memory_get_peak_usage();
+        $base_mem = memory_get_usage();
         $before = microtime(true);
         $entityManager->flush();
         $after = microtime(true);
-        $total_mem = memory_get_peak_usage();
+        $total_mem = memory_get_usage();
 
         $data[] = $after - $before;
         $data[] = $total_mem - $base_mem;
@@ -113,19 +123,30 @@ class AirportsController extends AbstractController
 
         $airport = new Airport();
 
+        $airport->setAirportId($data['airport_id']);
         $airport->setName($data['name']);
         $airport->setCity($data['city']);
         $airport->setCountry($data['country']);
+        $airport->setIata($data['iata']);
+        $airport->setIcao($data['icao']);
+        $airport->setLatitude($data['latitude']);
+        $airport->setLongitude($data['longitude']);
+        $airport->setAltitude($data['altitude']);
+        $airport->setTimezone($data['timezone']);
+        $airport->setTzDatabaseTimeZone($data['tz_database_time_zone']);
+        $airport->setType($data['type']);
+        $airport->setSource($data['source']);
+        $airport->setLocation($data['location']);
 
         $entityManager->persist($airport);
 
         $data = [];
 
-        $base_mem = memory_get_peak_usage();
+        $base_mem = memory_get_usage();
         $before = microtime(true);
         $entityManager->flush();
         $after = microtime(true);
-        $total_mem = memory_get_peak_usage();
+        $total_mem = memory_get_usage();
 
         $data[] = $after - $before;
         $data[] = $total_mem - $base_mem;
@@ -154,11 +175,11 @@ class AirportsController extends AbstractController
 
         $data = [];
 
-        $base_mem = memory_get_peak_usage();
+        $base_mem = memory_get_usage();
         $before = microtime(true);
         $entityManager->flush();
         $after = microtime(true);
-        $total_mem = memory_get_peak_usage();
+        $total_mem = memory_get_usage();
 
         $data[] = $after - $before;
         $data[] = $total_mem - $base_mem;
