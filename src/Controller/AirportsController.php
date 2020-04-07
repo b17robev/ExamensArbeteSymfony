@@ -19,14 +19,30 @@ class AirportsController extends AbstractController
      */
     public function index(Request $request)
     {
+        if($amount = $request->get('amount')) {
+            $data = [];
+
+            $base_mem = memory_get_usage();
+            $before = microtime(true);
+            $airports = $this->getDoctrine()
+                ->getRepository(Airport::class)
+                ->take($amount);
+            $after = microtime(true);
+            $total_mem = memory_get_usage();
+
+            $data[] = $after - $before;
+            $data[] = $total_mem - $base_mem;
+
+            $result = implode(',', $data) . "\n";
+
+            $this->httpPost($this->getParameter('app.scraper_url'), $result, "index");
+
+            return new JsonResponse($airports);
+        }
+
         $airports = $this->getDoctrine()
             ->getRepository(Airport::class)
             ->findAll();
-        $rep = $this->getDoctrine()
-            ->getRepository(Airport::class);
-        if($amount = $request->attributes->get('amount')) {
-            $rep->take($amount);
-        }
 
         return $this->render("airports/index.html.twig", [
             'airports' => $airports
@@ -75,15 +91,14 @@ class AirportsController extends AbstractController
 
         $airport = $this->getDoctrine()->getRepository(Airport::class)->find($id);
 
-        $airport->setAirportId($data['airport_id']);
         $airport->setName($data['name']);
         $airport->setCity($data['city']);
         $airport->setCountry($data['country']);
         $airport->setIata($data['iata']);
         $airport->setIcao($data['icao']);
-        $airport->setLatitude($data['latitude']);
-        $airport->setLongitude($data['longitude']);
-        $airport->setAltitude($data['altitude']);
+        $airport->setLatitude((float)$data['latitude']);
+        $airport->setLongitude((float)$data['longitude']);
+        $airport->setAltitude((int)$data['altitude']);
         $airport->setTimezone($data['timezone']);
         $airport->setTzDatabaseTimeZone($data['tz_database_time_zone']);
         $airport->setType($data['type']);
@@ -123,15 +138,14 @@ class AirportsController extends AbstractController
 
         $airport = new Airport();
 
-        $airport->setAirportId($data['airport_id']);
         $airport->setName($data['name']);
         $airport->setCity($data['city']);
         $airport->setCountry($data['country']);
         $airport->setIata($data['iata']);
         $airport->setIcao($data['icao']);
-        $airport->setLatitude($data['latitude']);
-        $airport->setLongitude($data['longitude']);
-        $airport->setAltitude($data['altitude']);
+        $airport->setLatitude((float)$data['latitude']);
+        $airport->setLongitude((float)$data['longitude']);
+        $airport->setAltitude((int)$data['altitude']);
         $airport->setTimezone($data['timezone']);
         $airport->setTzDatabaseTimeZone($data['tz_database_time_zone']);
         $airport->setType($data['type']);
