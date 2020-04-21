@@ -30,8 +30,8 @@ class AirportsController extends AbstractController
             $after = microtime(true);
             $total_mem = memory_get_usage();
 
-            $data[] = $after - $before;
-            $data[] = $total_mem - $base_mem;
+            $data[] = ($after - $before) * 1000; //Convert to ms
+            $data[] = ($total_mem - $base_mem) / 1024; //Convert to kb
 
             $result = implode(',', $data) . "\n";
 
@@ -66,8 +66,8 @@ class AirportsController extends AbstractController
         $after = microtime(true);
         $total_mem = memory_get_usage();
 
-        $data[] = $after - $before;
-        $data[] = $total_mem - $base_mem;
+        $data[] = ($after - $before) * 1000; //Convert to ms
+        $data[] = ($total_mem - $base_mem) / 1024; //Convert to kb
 
         $result = implode(',', $data) . "\n";
 
@@ -115,8 +115,8 @@ class AirportsController extends AbstractController
         $after = microtime(true);
         $total_mem = memory_get_usage();
 
-        $data[] = $after - $before;
-        $data[] = $total_mem - $base_mem;
+        $data[] = ($after - $before) * 1000; //Convert to ms
+        $data[] = ($total_mem - $base_mem) / 1024; //Convert to kb
 
         $result = implode(',', $data) . "\n";
 
@@ -162,8 +162,8 @@ class AirportsController extends AbstractController
         $after = microtime(true);
         $total_mem = memory_get_usage();
 
-        $data[] = $after - $before;
-        $data[] = $total_mem - $base_mem;
+        $data[] = ($after - $before) * 1000; //Convert to ms
+        $data[] = ($total_mem - $base_mem) / 1024; //Convert to kb
 
         $result = implode(',', $data) . "\n";
 
@@ -195,8 +195,8 @@ class AirportsController extends AbstractController
         $after = microtime(true);
         $total_mem = memory_get_usage();
 
-        $data[] = $after - $before;
-        $data[] = $total_mem - $base_mem;
+        $data[] = ($after - $before) * 1000; //Convert to ms
+        $data[] = ($total_mem - $base_mem) / 1024; //Convert to kb
 
         $result = implode(',', $data) . "\n";
 
