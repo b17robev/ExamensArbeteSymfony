@@ -15,6 +15,9 @@ use Doctrine\ORM\EntityRepository;
  */
 class AirportRepository extends EntityRepository
 {
+    // /**
+    //  * @return Airport[] Returns an array of Airport objects
+    //  */
     public function take($amount)
     {
         return $this->createQueryBuilder('a')

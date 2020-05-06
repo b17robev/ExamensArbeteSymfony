@@ -35,7 +35,7 @@ class AirportsController extends AbstractController
 
             $result = implode(',', $data) . "\n";
 
-            $this->httpPost($this->getParameter('app.scraper_url'), $result, "index");
+            $this->writeToFile($this->getParameter('app.root'), "index", $result);
 
             return new JsonResponse($airports);
         }
@@ -71,7 +71,7 @@ class AirportsController extends AbstractController
 
         $result = implode(',', $data) . "\n";
 
-        $this->httpPost($this->getParameter('app.scraper_url'), $result, "show");
+        $this->writeToFile($this->getParameter('app.root'), "show", $result);
 
         return $this->render("airports/show.html.twig", [
             'airport' => $airport
@@ -120,8 +120,7 @@ class AirportsController extends AbstractController
 
         $result = implode(',', $data) . "\n";
 
-        $this->httpPost($this->getParameter('app.scraper_url'), $result, "update");
-
+        $this->writeToFile($this->getParameter('app.root'), "update", $result);
 
         return new JsonResponse($airport);
     }
@@ -167,7 +166,7 @@ class AirportsController extends AbstractController
 
         $result = implode(',', $data) . "\n";
 
-        $this->httpPost($this->getParameter('app.scraper_url'), $result, "store");
+        $this->writeToFile($this->getParameter('app.root'), "store", $result);
 
         return new Response("Saved new airport with id " . $airport->getAirportId());
     }
@@ -200,21 +199,36 @@ class AirportsController extends AbstractController
 
         $result = implode(',', $data) . "\n";
 
-        $this->httpPost($this->getParameter('app.scraper_url'), $result, "destroy");
+        $this->writeToFile($this->getParameter('app.root'), "destroy", $result);
 
         return new Response('Deleted', 200);
     }
 
-    function httpPost($url, $data, $method)
+    function writeToFile($root, $file, $content)
     {
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, "$method=$data");
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($curl);
-        curl_close($curl);
+        $measurementsPath = $root . DIRECTORY_SEPARATOR. 'measurements' . DIRECTORY_SEPARATOR;
+        $actions = ['index', 'update', 'store', 'destroy', 'show'];
 
-        return $response;
+        if(!file_exists($root . DIRECTORY_SEPARATOR. 'measurements')) {
+            mkdir($root . DIRECTORY_SEPARATOR. 'measurements');
+        }
+
+        $files = array_diff(scandir($measurementsPath), array('.', '..'));
+        if(!count($files)) {
+            foreach($actions as $action)
+            {
+                if(!is_file($measurementsPath . $action . '.txt'))
+                {
+                    file_put_contents($measurementsPath . $action . '.txt', '');
+                }
+            }
+        }
+
+        $outputFile = $measurementsPath . $file . '.txt';
+
+        $fp=fopen($outputFile,"a");
+        fputs ($fp, $content);
+        fclose ($fp);
     }
 
 }
